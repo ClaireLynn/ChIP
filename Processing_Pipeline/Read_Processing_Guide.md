@@ -136,7 +136,7 @@ qusub rmdup.sh
 
 ## Peak calling and visualisation
 
-5) cd to peakcall and make two files:
+1) cd to peakcall and make two files:
 
 **"prefix_test.txt" - contains all prefixes for ChIP samples.**
 
@@ -149,22 +149,27 @@ eg: If C00005CL is the input control for ChIP samples: C00001CL/C00002CL and C00
         C00003CL                        C00006CL
         C00004CL                        C00006CL
 
-12) qsub macs2.sh or macs2_broad.sh for broad peak calling
+2) qsub **macs2.sh** for narrow peak calling (best for TFs) or **macs2_broad.sh** for broad peak calling (best for histone marks).
 
-13) qsub makebigwigs.sh - for this you require a file "chrom.sizes.txt" containing the chromosome
-sizes of your organism. You can find this online or create it from your bam
+```
+qsub masc2.sh
+```
+
+3) To make bigwig files for viewing in IGV, you require a file inside the peakcall directory called **"chrom.sizes.txt"** which contains the chromosome sizes of your organism. You can find this online (make sure the chromosome names match the reference files!) or create it from your bam
 file header! Extract with samtools view and then use sed to remove the
 unwanted characters e.g.:
 
-samtools view -H R00202CL.bam | head -n -1 | sed 's/@SQ\t//g; s/SN://g; s/\t/ /g; s/LN://g' | tail -n +2 > chrom.sizes.txt
+```
+samtools view -H ../map/C00001CL.bam | head -n -1 | sed 's/@SQ\t//g; s/SN://g; s/\t/ /g; s/LN://g' | tail -n +2 > chrom.sizes.txt
+```
+4) Then you can run **makebigwigs.sh** remaining in the peakcall directory
 
-14) *Optional 1*  qsub filterpeaks.sh - for this you require a bed file
-containing blacklisted regions (includes repetitive regions which cause
-mapping errors and artefacts). You can find these in here:
-https://sites.google.com/site/anshulkundaje/projects/blacklists
-They may need to have the chromsome names edited to fit ensembl annotation (remove "chr").
+```
+qsub makebigwigs.sh
 
-15) *Optional 2*: Use bedtools to look for differences between peak files. You need to
+```
+
+5) *Optional*: Use bedtools to look for differences between peak files. You need to
 decide which are the best options to use as this is project specific.
 
 http://bedtools.readthedocs.io/en/latest/content/tools/intersect.html
@@ -175,7 +180,6 @@ http://bedtools.readthedocs.io/en/latest/content/tools/subtract.html
 eg.
 bedtools subtract -A -a C00012RK_peaks.broadPeak -b C00016RK_peaks.broadPeak > 12v16.subtract.broadPeak
 
-16) *Optional 3*: Make heatmaps using Deeptools!
 
-17) Any further steps will now be completed in R using bioconductor packages. This is highly project specific.
+6) Any further steps will now be completed in R using bioconductor packages. This is highly project specific.
        
