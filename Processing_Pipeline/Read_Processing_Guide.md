@@ -174,11 +174,15 @@ decide which are the best options to use as this is project specific.
 
 http://bedtools.readthedocs.io/en/latest/content/tools/intersect.html
 eg.
+```
 bedtools intersect -wa -a C00012RK_peaks.broadPeak -b C00016RK_peaks.broadPeak > wa.12v16.broadPeak
+```
 
 http://bedtools.readthedocs.io/en/latest/content/tools/subtract.html
 eg.
+```
 bedtools subtract -A -a C00012RK_peaks.broadPeak -b C00016RK_peaks.broadPeak > 12v16.subtract.broadPeak
+```
 
 
 6) Any further steps will now be completed in R using bioconductor packages. This is highly project specific.
