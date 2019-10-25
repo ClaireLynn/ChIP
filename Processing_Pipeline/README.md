@@ -99,7 +99,7 @@ bash chipsetup.sh -g ~/groupso/REFERENCES/Homo_sapiens.GRCh38.fa -o hs
 
 ## Processing
 
-Now we begin actually processing these data. Each job must be ran in the correct order but may be submitted before previous jobs have ended.
+Now we begin actually processing these data. Each job must be ran in the correct order but may be submitted before previous jobs have ended. You may check the progress of your jobs with ```qstat```.
 
 1) cd to fastqc and run **fastqc.sh** with qsub.
 
