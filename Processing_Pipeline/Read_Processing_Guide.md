@@ -1,6 +1,6 @@
 # ChIP-Seq Read Processing Guide
 
-This detailed guide was made to instruct keen beginners to process their own data for visual inspection and downstream analysis.
+This detailed guide was made to instruct keen beginners to process their own ChIPSeq data for visual inspection and downstream analysis.
 
 Here, we will describe how to process your raw fastq files and get peaks and track files for IGV.
 
@@ -38,6 +38,10 @@ the default option reserves a run time of 10 hours.
 
 You may also add additional options when you run ```qsub```, reference: http://gridscheduler.sourceforge.net/htmlman/manuals.html for more options.
 
+
+
+## Preparation
+
 1) In your scratch directory, make a directory for your project
 
 ``` 
@@ -46,7 +50,8 @@ mkdir claire_chip2016
 ```
 2) Next, find out where your files are!
 They will be deposited in the ~/groupso/SO_DATA directory, then in the directory corresponding to the sequencing date.
-As they are ChIP samples they will begin with "C", followed by the unique 5 digit sample code, your intials eg. "CL" and end in ".fastq.gz".
+As they are ChIP samples they will begin with "C", followed by the unique 5 digit sample code, your intials eg. "CL" and end in ".fastq.gz". For example: C00447CL_R1.fastq.gz
+
 You can use a wildcard (*) to replace variable parts of the filename like this: C*CL*.fastq.gz
 Check you can find your files using ls:
 
@@ -73,40 +78,76 @@ If you make a mistake here, use ```find -type l -delete``` to delete all symlink
 ls *R1.fastq.gz | cut -c1-8 > prefix.txt
 ```
 
-5) Run chipsetup.sh with bash, this will make all directories and scripts for you used in this guide.
+5) Run **chipsetup.sh** with bash, this will make all directories and bash scripts for you to use in this guide.
 
-You will need to give the script the number of samples to be processed with the -samples option.
-Hint: this is the number of lines in your prefix file.
+You will need to give the script the genome file to map to (-g) and the organism (-o).
+Make sure the genome file exists.
+
+For **mouse** this may be:
 
 ```
-bash chipsetup.sh
+bash chipsetup.sh -g ~/groupso/REFERENCES/Mus_GRCm38.fa -o mm
 
 ```
-6) run fastQC.sh 
+For **human** this may be:
 
-7) cd to trim, qsub trimgalore.sh
-8) cd to map, open bowtie2.sh check the genome is the correct file for your project
-and that it exists
-9) qsub bowtie2.sh
-10) qsub rmdup.sh to remove duplicates
-- This is optional but advised in most cases
+```
+bash chipsetup.sh -g ~/groupso/REFERENCES/Homo_sapiens.GRCh38.fa -o hs
 
-11) cd to peakcall, make two files:
+```
 
-"prefix_test.txt" - contains all prefixes for chip samples (no input)
-        "prefix_ctrl.txt" - contains all prefixes for input controls (or igg),
-        must be in the same order corresponding to the chip samples
-        eg: C00005CL is the input for the first 2 samples and C00006CL is the
-        input for the second 2
+## Processing
 
-        prefix_test.txt:        prefix_ctrl.txt:
-        C00001CL                C00005CL
-        C00002CL                C00005CL
-        C00003CL                C00006CL
-        C00004CL                C00006CL
+** Now we begin actually processing these data. Each job must be ran in the correct order but may be submitted before previous jobs have ended.
 
-        If the number of lines in prefix_ctrl.txt is shorter than prefix_test.txt
-        the array job will still run. For example If you have only 1 input for your whole experiment
+1) cd to fastqc and run **fastqc.sh** with qsub.
+
+```
+cd fastqc 
+
+qsub fastqc.sh
+
+```
+
+2) cd to trim, qsub **trimgalore.sh**
+
+```
+cd ../trim 
+
+qusub trimgalore.sh
+
+```
+
+3) cd to map, qsub **bowtie2.sh** 
+
+```
+cd ../map 
+
+qusub bowtie2.sh
+
+```
+
+4) Remaining in the map directory, qsub **rmdup.sh** to remove duplicates
+
+``` 
+qusub rmdup.sh
+
+```
+
+## Peak calling and visualisation
+
+5) cd to peakcall and make two files:
+
+**"prefix_test.txt" - contains all prefixes for ChIP samples.**
+
+**"prefix_ctrl.txt" - contains all prefixes for input controls (or igg)**, these must be in the same order corresponding to the chip samples. 
+eg: If C00005CL is the input control for ChIP samples: C00001CL/C00002CL and C00006CL is the input control for C00003CL/C00004CL the contents of the files would be as follows:
+
+        prefix_test.txt:                prefix_ctrl.txt:
+        C00001CL                        C00005CL
+        C00002CL                        C00005CL
+        C00003CL                        C00006CL
+        C00004CL                        C00006CL
 
 12) qsub macs2.sh or macs2_broad.sh for broad peak calling
 
