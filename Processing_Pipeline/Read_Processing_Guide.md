@@ -52,7 +52,7 @@ mkdir claire_chip2016
 They will be deposited in the ~/groupso/SO_DATA directory, then in the directory corresponding to the sequencing date.
 As they are ChIP samples they will begin with "C", followed by the unique 5 digit sample code, your intials eg. "CL" and end in ".fastq.gz". For example: C00447CL_R1.fastq.gz
 
-You can use a wildcard (*) to replace variable parts of the filename like this: C*CL*.fastq.gz
+You can use a wildcard (\*) to replace variable parts of the filename like this: C\*CL\*.fastq.gz
 Check you can find your files using ls:
 
 ```
