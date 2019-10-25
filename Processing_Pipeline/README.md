@@ -1,7 +1,7 @@
 # ChIP-Seq Read Processing Guide
 
 This detailed guide was made to instruct keen beginners to process their own ChIPSeq data for visual inspection and downstream analysis.
-The bash script which generates all the directories and bash scripts for the pipline can be found in this folder: [chipsetup.sh](chipsetup.sh).
+The bash script which generates all the directories and bash scripts for the pipline can be found in this folder: [**chipsetup.sh**](chipsetup.sh).
 
 Here, we will describe how to process your raw fastq files and get peaks and track files for IGV.
 
@@ -79,7 +79,7 @@ If you make a mistake here, use ```find -type l -delete``` to delete all symlink
 ls *R1.fastq.gz | cut -c1-8 > prefix.txt
 ```
 
-5) Run **chipsetup.sh** with bash, this will make all directories and bash scripts for you to use in this guide.
+5) Run [**chipsetup.sh**](chipsetup.sh) with bash, this will make all directories and bash scripts for you to use in this guide.
 
 You will need to give the script the genome file to map to (-g) and the organism (-o).
 Make sure the genome file exists.
