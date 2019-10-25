@@ -66,7 +66,7 @@ Make a file with all symlink commands called ln.sh, then run it with bash:
 ```
 cd claire_chip2016 
 
-ls ~/groupso/SO_DATA/2018-03/C*CL.fastq.gz | column -t | awk '{print "ln -s "$1}' > ln.sh
+ls ~/groupso/SO_DATA/2016-04/C*CL.fastq.gz | column -t | awk '{print "ln -s "$1}' > ln.sh
 
 bash ln.sh
 ```
