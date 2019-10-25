@@ -99,12 +99,12 @@ myFile=`head -n $SGE_TASK_ID ../prefix.txt | tail -1`
 #So, the PBS ID corresponds to that line in the files
 
 java -Xmx512m -XX:ParallelGCThreads=1 -jar ~/groupso/bin/picard.jar MarkDuplicates \
-											M=$myFile.2.met \
-											I=$myFile.sorted.bam \
-											O=$myFile.rmdup.bam \
-											REMOVE_DUPLICATES=true  \
-											VALIDATION_STRINGENCY=SILENT  \
-											MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000
+					M=$myFile.2.met \
+					I=$myFile.sorted.bam \
+					O=$myFile.rmdup.bam \
+					REMOVE_DUPLICATES=true  \
+					VALIDATION_STRINGENCY=SILENT  \
+					MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000
 
 
 exit 0;' > map/rmdup.sh
