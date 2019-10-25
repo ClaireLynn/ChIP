@@ -1,6 +1,6 @@
 # ChIP-Seq Read Processing Guide
 
-This guide was made to instruct beginners to process their own data for visual inspection and downstream analysis.
+This detailed guide was made to instruct keen beginners to process their own data for visual inspection and downstream analysis.
 
 Here, we will describe how to process your raw fastq files and get peaks and track files for IGV.
 
@@ -16,6 +16,7 @@ At the top of every script are the qsub options:
 #$ -V
 #$ -hold_jid fastqc
 #$ -N trimgalore
+#$ -l h_rt=10:00:00
 
 ```
 
@@ -33,45 +34,62 @@ myFile=`head -n $SGE_TASK_ID prefix.txt | tail -1`
 ```-N``` allows you to name the job
 
 If your jobs are queued but not running for a long time try adding ```-l h_rt=06:00:00``` after qsub for a max run time of 6 hours,
-the default option reserves a run time of 72 hours.
+the default option reserves a run time of 10 hours.
 
-You may also add additional options when you run ```qsub```, reference http://gridscheduler.sourceforge.net/htmlman/manuals.html for more options.
+You may also add additional options when you run ```qsub```, reference: http://gridscheduler.sourceforge.net/htmlman/manuals.html for more options.
 
-1) mkdir for your project
+1) In your scratch directory, make a directory for your project
 
-2) cd to project and mkdir fastq, trim, map and peakcall
-
-3) copy over all scripts and change the option for -t in each script to match the
-number of samples you have (1-12 for 12, 1-8 for 8 etc.)
-
-4) cd to fastq and make symlinks of your fastq files.
-
-Make a file with all symlink commands called ln.sh, then run it:
+``` 
+mkdir claire_chip2016 
 
 ```
-ls ~/groupso/SO_DATA/2018-03/C*JC_R*.fastq.gz | column -t | awk '{print "ln -s "$1}' > ln.sh
+2) Next, find out where your files are!
+They will be deposited in the ~/groupso/SO_DATA directory, then in the directory corresponding to the sequencing date.
+As they are ChIP samples they will begin with "C", followed by the unique 5 digit sample code, your intials eg. "CL" and end in ".fastq.gz".
+You can use a wildcard (*) to replace variable parts of the filename like this: C*CL*.fastq.gz
+Check you can find your files using ls:
+
+```
+ls ~/groupso/SO_DATA/2016-04/C*CL*.fastq.gz
+```
+
+3) cd to your project and make symlinks of your fastq files.
+Make a file with all symlink commands called ln.sh, then run it with bash:
+
+```
+cd claire_chip2016 
+
+ls ~/groupso/SO_DATA/2018-03/C*CL.fastq.gz | column -t | awk '{print "ln -s "$1}' > ln.sh
 
 bash ln.sh
 ```
-If you mess up the symlinks use ```find -type l -delete``` to delete all symlinks
+If you make a mistake here, use ```find -type l -delete``` to delete all symlinks
 
-5) make prefix.txt as follows:
+
+4) Make prefix.txt containing the first 8 characters of the file names as follows:
 
 ```
 ls *R1.fastq.gz | cut -c1-8 > prefix.txt
 ```
 
-6) run fastQC.sh 
+5) Run chipsetup.sh with bash, this will make all directories and scripts for you used in this guide.
 
+You will need to give the script the number of samples to be processed with the -samples option.
+Hint: this is the number of lines in your prefix file.
+
+```
+bash chipsetup.sh
+
+```
+6) run fastQC.sh 
 
 7) cd to trim, qsub trimgalore.sh
 8) cd to map, open bowtie2.sh check the genome is the correct file for your project
 and that it exists
 9) qsub bowtie2.sh
 10) qsub rmdup.sh to remove duplicates
-- This is optional but advised in most cases,
-if you decide to keep duplicates, you may skip but you will have to edit
-the following scripts so that they can find your bam files.
+- This is optional but advised in most cases
 
 11) cd to peakcall, make two files:
 
@@ -118,6 +136,5 @@ bedtools subtract -A -a C00012RK_peaks.broadPeak -b C00016RK_peaks.broadPeak > 1
 
 16) *Optional 3*: Make heatmaps using Deeptools!
 
-17) Any other steps will now be completed in R using bioconductor packages
-such as diffbind or csaw. This is highly project specific!
+17) Any further steps will now be completed in R using bioconductor packages. This is highly project specific.
        
